@@ -14,7 +14,7 @@ int main()
 	sf::Clock clock;
 
 	sf::Clock m_timer;
-	float timer = 1.8f;
+	float timer = .2f;
 
 	float deltaTime;
 
@@ -29,7 +29,7 @@ int main()
 				window.close();
 		}
 		
-		if (timer < 1.0f)
+		if (timer < .25f)
 			timer += m_timer.restart().asSeconds();
 		else
 		{

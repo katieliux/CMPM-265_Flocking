@@ -14,10 +14,12 @@ public:
 	void ApplyBehaviors(sf::RenderWindow * window, Vehicle & v);
 	void Render(sf::RenderWindow* window);
 private:
-	std::vector<Vehicle> vehicleList;
+	std::vector<Vehicle> boids;
 
-	float r = 50.0f;
+	float r = 25.0f;
 	void Separate(Vehicle& v);
+	void Alignment(Vehicle& v);
+	void Cohesion(Vehicle& v);
 	void Seek(sf::RenderWindow * window, Vehicle& v);
 };
 
