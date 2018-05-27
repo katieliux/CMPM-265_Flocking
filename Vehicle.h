@@ -3,18 +3,18 @@
 class Vehicle
 {
 public:
-	Vehicle();
+	Vehicle(sf::RenderWindow* window);
 	~Vehicle();
+	void ApplyForce(sf::Vector2f steer);
 	void Update(sf::RenderWindow* window, float deltaTime);
-	void Seek(sf::RenderWindow * window, float deltaTime);
 	sf::CircleShape shape;
-private:
+
 	sf::Vector2f location;
 	sf::Vector2f veclocity;
 	sf::Vector2f acceleration;
 	float maxSpeed;
+private:
 	float maxForce;
-
 	float slowdownDist;
 };
 

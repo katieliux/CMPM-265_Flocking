@@ -5,15 +5,20 @@
 #include <SFML/System.hpp>
 #include <SFML/OpenGL.hpp>
 #include <SFML/Main.hpp>
-#include "Vehicle.h"
+#include "VehicleSystem.h"
+
 int main()
 {
 	sf::RenderWindow window(sf::VideoMode(800, 600), "Flocking");
 
 	sf::Clock clock;
+
+	sf::Clock m_timer;
+	float timer = 1.8f;
+
 	float deltaTime;
 
-	Vehicle* m_vehicle = new Vehicle();
+	VehicleSystem* m_vs = new VehicleSystem();
 
 	while (window.isOpen())
 	{
@@ -24,14 +29,21 @@ int main()
 				window.close();
 		}
 		
+		if (timer < 1.0f)
+			timer += m_timer.restart().asSeconds();
+		else
+		{
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			{
+				m_vs->AddVehicle(&window);
+				timer = 0;
+			}
+		}
 		deltaTime = clock.restart().asSeconds();
 
+		m_vs->Update(&window, deltaTime);
+		m_vs->Render(&window);
 
-		m_vehicle->Update(&window, deltaTime);
-
-		window.clear();
-		window.draw(m_vehicle->shape);
-		window.display();
 	}
 
 	return 0;
