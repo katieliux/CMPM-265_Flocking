@@ -155,11 +155,13 @@
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MyMathLib.cpp" />
+    <ClCompile Include="Path.cpp" />
     <ClCompile Include="Vehicle.cpp" />
     <ClCompile Include="VehicleSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyMathLib.h" />
+    <ClInclude Include="Path.h" />
     <ClInclude Include="Vehicle.h" />
     <ClInclude Include="VehicleSystem.h" />
   </ItemGroup>

@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iostream>
 #include "Vehicle.h"
+#include "Path.h"
 
 class VehicleSystem
 {
@@ -13,6 +14,7 @@ public:
 	void Update(sf::RenderWindow* window, float deltaTime);
 	void ApplyBehaviors(sf::RenderWindow * window, Vehicle & v);
 	void Render(sf::RenderWindow* window);
+	void GetPath(Path* path);
 private:
 	std::vector<Vehicle> boids;
 
@@ -21,5 +23,8 @@ private:
 	void Alignment(Vehicle& v);
 	void Cohesion(Vehicle& v);
 	void Seek(sf::RenderWindow * window, Vehicle& v);
+	void FollowThePath(Path* path, Vehicle& v);
+	sf::Vector2f GetNormalPoint(sf::Vector2f p, sf::Vector2f a, sf::Vector2f b);
+	Path* currentPath = nullptr;
 };
 

@@ -48,7 +48,6 @@ void Vehicle::ApplyForce(sf::Vector2f steer)
 {
 	acceleration += steer;
 }
-
 void Vehicle::SeekNearbyGroup(sf::Vector2f target)
 {
 	location = shape.getPosition();

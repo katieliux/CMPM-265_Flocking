@@ -1,5 +1,6 @@
 #include "VehicleSystem.h"
 #include "MyMathLib.h"
+
 using namespace sf;
 VehicleSystem::VehicleSystem()
 {
@@ -9,6 +10,11 @@ VehicleSystem::VehicleSystem()
 
 VehicleSystem::~VehicleSystem()
 {
+}
+
+void VehicleSystem::GetPath(Path* path)
+{
+	currentPath = path;
 }
 
 void VehicleSystem::AddVehicle(sf::RenderWindow* window)
@@ -27,24 +33,23 @@ void VehicleSystem::Update(sf::RenderWindow* window, float deltaTime)
 
 void VehicleSystem::ApplyBehaviors(sf::RenderWindow * window, Vehicle & v)
 {
-	Vector2f wind = Vector2f(0.001, 0);
-	Vector2f gravity = Vector2f(0, 0.1);
+	Vector2f wind = Vector2f(100, 0);
+	//Vector2f gravity = Vector2f(0, 0.1);
 	v.ApplyForce(wind);
-	v.ApplyForce(gravity);
-	Seek(window, v);
+	//v.ApplyForce(gravity);
+	/*Seek(window, v);
 	Separate(v);
 	Alignment(v);
-	Cohesion(v);
+	Cohesion(v);*/
+	FollowThePath(currentPath, v);
 }
 
 void VehicleSystem::Render(sf::RenderWindow* window)
 {
-	window->clear();
 	for (auto v : boids)
 	{
 		window->draw(v.shape);
 	}
-	window->display();
 }
 
 void VehicleSystem::Seek(sf::RenderWindow * window, Vehicle& v)
@@ -61,6 +66,39 @@ void VehicleSystem::Seek(sf::RenderWindow * window, Vehicle& v)
 
 	Vector2f steer = desired - v.veclocity;
 	v.ApplyForce(steer);
+}
+
+void VehicleSystem::FollowThePath(Path * p, Vehicle & v)
+{
+	if (p != nullptr)
+	{
+
+		Vector2f predictLoc = v.location + MyMathLib::Normalize(v.veclocity) * 25.0f;
+
+		Vector2f a = p->start;
+		Vector2f b = p->end;
+			
+		Vector2f normalPoint = GetNormalPoint(predictLoc, a, b);
+	
+		Vector2f dir = MyMathLib::Normalize(b - a) * 10.0f;
+		
+		Vector2f target = normalPoint + dir;
+
+		float dist = MyMathLib::Magnitude(normalPoint - predictLoc);
+		if (dist > p->radius)
+			v.SeekNearbyGroup(target);
+	}
+}
+
+Vector2f VehicleSystem::GetNormalPoint(Vector2f p, Vector2f a, Vector2f b)
+{
+	Vector2f ap = p - a;
+	Vector2f ab = b - a;
+	ab = MyMathLib::Normalize(ab);
+	ab *= MyMathLib::DotProduct(ap, ab);
+	Vector2f normalPoint = a + ab;
+
+	return normalPoint;
 }
 
 void VehicleSystem::Separate(Vehicle& v)

@@ -6,7 +6,7 @@
 #include <SFML/OpenGL.hpp>
 #include <SFML/Main.hpp>
 #include "VehicleSystem.h"
-
+#include "Path.h"
 int main()
 {
 	sf::RenderWindow window(sf::VideoMode(800, 600), "Flocking");
@@ -18,8 +18,10 @@ int main()
 
 	float deltaTime;
 
+	
 	VehicleSystem* m_vs = new VehicleSystem();
-
+	Path *m_path = new Path(&window);
+	m_vs->GetPath(m_path);
 	while (window.isOpen())
 	{
 		sf::Event event;
@@ -42,8 +44,10 @@ int main()
 		deltaTime = clock.restart().asSeconds();
 
 		m_vs->Update(&window, deltaTime);
+		window.clear();
 		m_vs->Render(&window);
-
+		m_path->Render(&window);
+		window.display();
 	}
 
 	return 0;
