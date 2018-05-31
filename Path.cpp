@@ -2,7 +2,7 @@
 
 Path::Path(sf::RenderWindow* window)
 {
-	radius = 1;
+	radius = 10;
 	lines.resize(4);
 	lines.setPrimitiveType(sf::LinesStrip);
 

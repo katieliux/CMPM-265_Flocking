@@ -19,7 +19,7 @@ int main()
 	float deltaTime;
 
 	
-	VehicleSystem* m_vs = new VehicleSystem();
+	VehicleSystem* m_vs = new VehicleSystem(&window);
 	Path *m_path = new Path(&window);
 	m_vs->GetPath(m_path);
 	while (window.isOpen())
@@ -42,6 +42,21 @@ int main()
 			}
 		}
 		deltaTime = clock.restart().asSeconds();
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+			m_vs->WindToggle();
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::G))
+			m_vs->GravityToggle();
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
+			m_vs->SeekToggle();
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+			m_vs->SeparateToggle();
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+			m_vs->AlignmentToggle();
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
+			m_vs->CohesionToggle();
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::P))
+			m_vs->PathingToggle();
 
 		m_vs->Update(&window, deltaTime);
 		window.clear();

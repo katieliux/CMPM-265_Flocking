@@ -2,46 +2,60 @@
 #include "MyMathLib.h"
 
 using namespace sf;
-VehicleSystem::VehicleSystem()
+VehicleSystem::VehicleSystem(sf::RenderWindow* window)
 {
-	
+	gridWidth = window->getSize().x / COLUMNS;
+	gridHeight = window->getSize().y / ROWS;
 }
 
 
 VehicleSystem::~VehicleSystem()
 {
-}
-
-void VehicleSystem::GetPath(Path* path)
-{
-	currentPath = path;
-}
-
-void VehicleSystem::AddVehicle(sf::RenderWindow* window)
-{
-	boids.push_back(Vehicle(window));
+	for (int i = 0; i < ROWS; i++)
+		for (int j = 0; j < COLUMNS; j++) 
+			grid[i][j].clear();
 }
 
 void VehicleSystem::Update(sf::RenderWindow* window, float deltaTime)
 {
 	for (auto &v : boids)
 	{
+//		Vector2i currBucket = GetBucket(v.location);
 		ApplyBehaviors(window, v);
 		v.Update(window, deltaTime);
+		//Vector2i newBucket = GetBucket(v.location);
+		//if (currBucket != newBucket)
+		//{
+		//	BucketRemove(currBucket, &v);
+		//	BucketAdd(newBucket, &v);
+		//}
+		//Vehicle* m_v = grid[newBucket.x]->at(newBucket.y);
+		//ApplyBehaviors(window, *grid[newBucket.x]->at(newBucket.y));
 	}
 }
 
 void VehicleSystem::ApplyBehaviors(sf::RenderWindow * window, Vehicle & v)
 {
-	Vector2f wind = Vector2f(10, 0);
-	//Vector2f gravity = Vector2f(0, 0.1);
-	v.ApplyForce(wind);
-	//v.ApplyForce(gravity);
-	//Seek(window, v);
-	Separate(v);
-	//Alignment(v);
-	//Cohesion(v);
-	FollowThePath(currentPath, v);
+	if (windToggle)
+	{
+		Vector2f wind = Vector2f(1, 0);
+		v.ApplyForce(wind);
+	}
+	if (gravityToggle)
+	{
+		Vector2f gravity = Vector2f(0, 0.1);
+		v.ApplyForce(gravity);
+	}
+	if (seekToggle)
+		Seek(window, v);
+	if(separateToggle)
+		Separate(v);
+	if (alignmentToggle)
+		Alignment(v);
+	if (cohesionToggle)
+		Cohesion(v);
+	if(pathingToggle)
+		FollowThePath(currentPath, v);
 }
 
 void VehicleSystem::Render(sf::RenderWindow* window)
@@ -52,46 +66,21 @@ void VehicleSystem::Render(sf::RenderWindow* window)
 	}
 }
 
-void VehicleSystem::Seek(sf::RenderWindow * window, Vehicle& v)
+void VehicleSystem::AddVehicle(sf::RenderWindow* window)
 {
-	Vector2f target = (Vector2f)sf::Mouse::getPosition(*window);
-	v.location = v.shape.getPosition();
-
-	Vector2f desired = MyMathLib::Normalize((target - v.location));
-
-	if (MyMathLib::Magnitude(target - v.location) > r)
-		desired *= v.maxSpeed;
-	else
-		desired *= MyMathLib::map(
-			MyMathLib::Magnitude(target - v.location), 
-			Vector2f(0, 0), 
-			Vector2f(100.f, v.maxSpeed));
-
-	Vector2f steer = desired - v.veclocity;
-	v.ApplyForce(steer);
-		//v.veclocity = v.veclocity * (MyMathLib::Magnitude(target - v.location) / r);
+	boids.push_back(Vehicle(window));
 }
 
-//void VehicleSystem::FollowThePath(Path * p, Vehicle & v)
-//{
-//	if (p != nullptr)
-//	{
-//		Vector2f predictLoc = v.location + MyMathLib::Normalize(v.veclocity) * 25.0f;
-//
-//		Vector2f a = p->start;
-//		Vector2f b = p->end;
-//			
-//		Vector2f normalPoint = GetNormalPoint(predictLoc, a, b);
-//	
-//		Vector2f dir = MyMathLib::Normalize(b - a) * 10.0f;
-//		
-//		Vector2f target = normalPoint + dir;
-//
-//		float dist = MyMathLib::Magnitude(normalPoint - predictLoc);
-//		if (dist > p->radius)
-//			v.SeekNearbyGroup(target);
-//	}
-//}
+void VehicleSystem::RemoveVehicle()
+{
+	boids.pop_back();
+}
+
+#pragma region Pathing
+void VehicleSystem::GetPath(Path* path)
+{
+	currentPath = path;
+}
 
 void VehicleSystem::FollowThePath(Path * p, Vehicle & v)
 {
@@ -162,6 +151,28 @@ Vector2f VehicleSystem::GetNormalPoint(Vector2f p, Vector2f a, Vector2f b)
 	return normalPoint;
 
 }
+#pragma endregion
+
+#pragma region Behaviors
+void VehicleSystem::Seek(sf::RenderWindow * window, Vehicle& v)
+{
+	Vector2f target = (Vector2f)sf::Mouse::getPosition(*window);
+	v.location = v.shape.getPosition();
+
+	Vector2f desired = MyMathLib::Normalize((target - v.location));
+
+	if (MyMathLib::Magnitude(target - v.location) > r)
+		desired *= v.maxSpeed;
+	else
+		desired *= MyMathLib::map(
+			MyMathLib::Magnitude(target - v.location),
+			Vector2f(0, 0),
+			Vector2f(r * 4, v.maxSpeed));
+
+	Vector2f steer = desired - v.veclocity;
+	v.ApplyForce(steer);
+	//v.veclocity = v.veclocity * (MyMathLib::Magnitude(target - v.location) / r);
+}
 
 void VehicleSystem::Separate(Vehicle& v)
 {
@@ -174,10 +185,10 @@ void VehicleSystem::Separate(Vehicle& v)
 		float d = MyMathLib::Magnitude(v.location - other.location);
 		if ((d > 0) && (d < desiredSeparation))
 		{
-			sf::Vector2f diff = MyMathLib::Normalize(v.location - other.location)/d;
+			sf::Vector2f diff = MyMathLib::Normalize(v.location - other.location) / d;
 			sum += diff;
 			count++;
-		}	
+		}
 	}
 	if (count > 0)
 	{
@@ -209,7 +220,7 @@ void VehicleSystem::Alignment(Vehicle& v)
 		v.ApplyForce(MyMathLib::Normalize(sum) * v.maxSpeed - v.veclocity);
 	}
 	else
-		v.ApplyForce(Vector2f(0,0));
+		v.ApplyForce(Vector2f(0, 0));
 }
 
 void VehicleSystem::Cohesion(Vehicle& v)
@@ -236,4 +247,62 @@ void VehicleSystem::Cohesion(Vehicle& v)
 	else
 		v.ApplyForce(Vector2f(0, 0));
 }
+#pragma endregion
 
+#pragma region Bucket
+sf::Vector2i VehicleSystem::GetBucket(sf::Vector2f pos)
+{
+	return sf::Vector2i(pos.x / gridWidth, pos.y / gridHeight);
+}
+
+void VehicleSystem::BucketAdd(sf::Vector2i bucket, Vehicle* v)
+{
+	grid[bucket.x][bucket.y].push_back(v);
+}
+
+void VehicleSystem::BucketRemove(sf::Vector2i bucket, Vehicle* v)
+{
+	auto i = std::find(grid[bucket.x][bucket.y].begin(), grid[bucket.x][bucket.y].end(), v);
+	if (i != grid[bucket.x][bucket.y].end())
+		grid[bucket.x][bucket.y].erase(i);
+}
+#pragma endregion
+
+#pragma region Toggle 
+void VehicleSystem::WindToggle()
+{
+	windToggle = !windToggle;
+}
+
+void VehicleSystem::GravityToggle()
+{
+	gravityToggle = !gravityToggle;
+}
+
+void VehicleSystem::SeekToggle()
+{
+	seekToggle = !seekToggle;
+	pathingToggle = !pathingToggle;
+}
+
+void VehicleSystem::SeparateToggle()
+{
+	separateToggle = !separateToggle;
+}
+
+void VehicleSystem::AlignmentToggle()
+{
+	alignmentToggle = !alignmentToggle;
+}
+
+void VehicleSystem::CohesionToggle()
+{
+	cohesionToggle = !cohesionToggle;
+}
+
+void VehicleSystem::PathingToggle()
+{
+	pathingToggle = !pathingToggle;
+	seekToggle = !seekToggle;
+}
+#pragma endregion 
