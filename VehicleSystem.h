@@ -24,9 +24,18 @@ public:
 	void AlignmentToggle();
 	void CohesionToggle();
 	void PathingToggle();
+
+	int GetBoidsCount();
+
+	bool windToggle = true;
+	bool gravityToggle = true;
+	bool seekToggle = true;
+	bool separateToggle = true;
+	bool alignmentToggle = true;
+	bool cohesionToggle = true;
+	bool pathingToggle = false;
 private:
 	std::vector<Vehicle> boids;
-
 	float r = 25.0f;
 	void Separate(Vehicle& v);
 	void Alignment(Vehicle& v);
@@ -44,15 +53,6 @@ private:
 	sf::Vector2i GetBucket(sf::Vector2f pos);
 	void BucketAdd(sf::Vector2i bucket, Vehicle* v);
 	void BucketRemove(sf::Vector2i bucket, Vehicle* v);
-
-	bool windToggle = true;
-	bool gravityToggle = true;
-	bool seekToggle = true;
-	bool separateToggle = true;
-	bool alignmentToggle = true;
-	bool cohesionToggle = true;
-	bool pathingToggle = false;
-
 };
 
 

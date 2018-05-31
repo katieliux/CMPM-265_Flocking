@@ -13,5 +13,10 @@ public:
 	sf::Vector2f end;
 	sf::VertexArray lines;
 	float radius;
+
+	void ChangePath();
+
+private:
+	sf::RenderWindow* window;
 };
 

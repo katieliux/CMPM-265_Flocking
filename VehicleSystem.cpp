@@ -76,6 +76,11 @@ void VehicleSystem::RemoveVehicle()
 	boids.pop_back();
 }
 
+int VehicleSystem::GetBoidsCount()
+{
+	return (int)boids.size();
+}
+
 #pragma region Pathing
 void VehicleSystem::GetPath(Path* path)
 {
