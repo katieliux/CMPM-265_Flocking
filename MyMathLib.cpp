@@ -21,3 +21,9 @@ float MyMathLib::DotProduct(sf::Vector2f vector_0, sf::Vector2f vector_1)
 {
 	return vector_0.x * vector_1.x + vector_0.y * vector_1.y;
 }
+
+float MyMathLib::map(float val, sf::Vector2f min, sf::Vector2f max)
+{
+	return min.y + ((max.y - min.y) * (val - min.x)) / (max.x - min.x);
+}
+

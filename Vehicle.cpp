@@ -54,11 +54,13 @@ void Vehicle::SeekNearbyGroup(sf::Vector2f target)
 
 	Vector2f desired = Vector2f(0, 0);
 	if (MyMathLib::Magnitude(target - location) > r)
+	{
 		desired = MyMathLib::Normalize((target - location)) * maxSpeed;
+		Vector2f steer = desired - veclocity;
+		ApplyForce(steer);
+	}
 	else
-		desired = MyMathLib::Normalize(target - location) * maxSpeed
-		* MyMathLib::Magnitude(target - location) / r;
+		veclocity = veclocity * (MyMathLib::Magnitude(target - location) / r);
 
-	Vector2f steer = desired - veclocity;
-	ApplyForce(steer);
+
 }
