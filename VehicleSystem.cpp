@@ -11,6 +11,7 @@ VehicleSystem::VehicleSystem(sf::RenderWindow* window)
 
 VehicleSystem::~VehicleSystem()
 {
+	boids.clear();
 	for (int i = 0; i < ROWS; i++)
 		for (int j = 0; j < COLUMNS; j++) 
 			grid[i][j].clear();
@@ -28,7 +29,8 @@ void VehicleSystem::Update(sf::RenderWindow* window, float deltaTime)
 			BucketRemove(currBucket, &v);
 			BucketAdd(newBucket, &v);
 		}
-		ApplyBehaviors(window, v, &grid[newBucket.x][newBucket.y]);
+		if(&grid[newBucket.x][newBucket.y] != nullptr)
+			ApplyBehaviors(window, v, &grid[newBucket.x][newBucket.y]);
 	}
 }
 
@@ -225,6 +227,7 @@ void VehicleSystem::Alignment(Vehicle& v, std::vector<Vehicle*>* const other_v)
 	}
 	else
 		v.ApplyForce(Vector2f(0, 0));
+
 }
 
 void VehicleSystem::Cohesion(Vehicle& v, std::vector<Vehicle*>* const other_v)

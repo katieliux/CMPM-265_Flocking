@@ -35,13 +35,13 @@ void Vehicle::Update(sf::RenderWindow* window, float deltaTime)
 	shape.setPosition(location);
 
 	if (shape.getPosition().x > window->getSize().x - 5)
-		shape.setPosition(6, shape.getPosition().y);
+		shape.setPosition(5, shape.getPosition().y);
 	if (shape.getPosition().x < 5)
-		shape.setPosition(window->getSize().x - 6, shape.getPosition().y);
+		shape.setPosition(window->getSize().x - 5, shape.getPosition().y);
 	if (shape.getPosition().y > window->getSize().y - 5)
-		shape.setPosition(shape.getPosition().x, 6);
+		shape.setPosition(shape.getPosition().x, 5);
 	if (shape.getPosition().y < 5)
-		shape.setPosition(shape.getPosition().y, window->getSize().y - 6);
+		shape.setPosition(shape.getPosition().y, window->getSize().y - 5);
 }
 
 void Vehicle::ApplyForce(sf::Vector2f steer)

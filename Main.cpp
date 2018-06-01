@@ -15,7 +15,7 @@ int main()
 	sf::Clock clock;
 
 	sf::Clock m_timer;
-	float timer = .2f;
+	float timer = .1f;
 
 	float deltaTime;
 
