@@ -12,8 +12,9 @@ public:
 	~VehicleSystem();
 	void AddVehicle(sf::RenderWindow* window);
 	void RemoveVehicle();
-	void Update(sf::RenderWindow* window, float deltaTime);
-	void ApplyBehaviors(sf::RenderWindow * window, Vehicle & v);
+	void Update(sf::RenderWindow* window, float deltaTime);	
+	//void ApplyBehaviors(sf::RenderWindow * window, Vehicle & v);
+	void ApplyBehaviors(sf::RenderWindow * window, Vehicle & v, std::vector<Vehicle*>* const other);
 	void Render(sf::RenderWindow* window);
 	void GetPath(Path* path);
 
@@ -25,21 +26,22 @@ public:
 	void CohesionToggle();
 	void PathingToggle();
 
-	int GetBoidsCount();
+	
+	std::string GetWindToggleStatus();
+	std::string GetGravityToggleStatus();
+	std::string GetSeekingToggleStatus();
+	std::string GetSeparateToggleStatus();
+	std::string GetAlignmentToggleStatus();
+	std::string GetCohesionToggleStatus();
+	std::string GetPathingToggleStatus();
 
-	bool windToggle = true;
-	bool gravityToggle = true;
-	bool seekToggle = true;
-	bool separateToggle = true;
-	bool alignmentToggle = true;
-	bool cohesionToggle = true;
-	bool pathingToggle = false;
+	int GetBoidsCount();
 private:
 	std::vector<Vehicle> boids;
 	float r = 25.0f;
-	void Separate(Vehicle& v);
-	void Alignment(Vehicle& v);
-	void Cohesion(Vehicle& v);
+	void Separate(Vehicle& v, std::vector<Vehicle*>* const other);
+	void Alignment(Vehicle& v, std::vector<Vehicle*>* const other);
+	void Cohesion(Vehicle& v, std::vector<Vehicle*>* const other);
 	void Seek(sf::RenderWindow * window, Vehicle& v);
 	void FollowThePath(Path* path, Vehicle& v);
 	sf::Vector2f GetNormalPoint(sf::Vector2f p, sf::Vector2f a, sf::Vector2f b);
@@ -53,6 +55,14 @@ private:
 	sf::Vector2i GetBucket(sf::Vector2f pos);
 	void BucketAdd(sf::Vector2i bucket, Vehicle* v);
 	void BucketRemove(sf::Vector2i bucket, Vehicle* v);
+
+	bool windToggle = true;
+	bool gravityToggle = true;
+	bool seekToggle = true;
+	bool separateToggle = true;
+	bool alignmentToggle = true;
+	bool cohesionToggle = true;
+	bool pathingToggle = false;
 };
 
 

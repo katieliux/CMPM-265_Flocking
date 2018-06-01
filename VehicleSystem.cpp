@@ -20,21 +20,19 @@ void VehicleSystem::Update(sf::RenderWindow* window, float deltaTime)
 {
 	for (auto &v : boids)
 	{
-//		Vector2i currBucket = GetBucket(v.location);
-		ApplyBehaviors(window, v);
+		Vector2i currBucket = GetBucket(v.location);
 		v.Update(window, deltaTime);
-		//Vector2i newBucket = GetBucket(v.location);
-		//if (currBucket != newBucket)
-		//{
-		//	BucketRemove(currBucket, &v);
-		//	BucketAdd(newBucket, &v);
-		//}
-		//Vehicle* m_v = grid[newBucket.x]->at(newBucket.y);
-		//ApplyBehaviors(window, *grid[newBucket.x]->at(newBucket.y));
+		Vector2i newBucket = GetBucket(v.location);
+		if (currBucket != newBucket)
+		{
+			BucketRemove(currBucket, &v);
+			BucketAdd(newBucket, &v);
+		}
+		ApplyBehaviors(window, v, &grid[newBucket.x][newBucket.y]);
 	}
 }
 
-void VehicleSystem::ApplyBehaviors(sf::RenderWindow * window, Vehicle & v)
+void VehicleSystem::ApplyBehaviors(sf::RenderWindow * window, Vehicle & v, std::vector<Vehicle*>* const other)
 {
 	if (windToggle)
 	{
@@ -48,13 +46,13 @@ void VehicleSystem::ApplyBehaviors(sf::RenderWindow * window, Vehicle & v)
 	}
 	if (seekToggle)
 		Seek(window, v);
-	if(separateToggle)
-		Separate(v);
+	if (separateToggle)
+		Separate(v, other);
 	if (alignmentToggle)
-		Alignment(v);
+		Alignment(v, other);
 	if (cohesionToggle)
-		Cohesion(v);
-	if(pathingToggle)
+		Cohesion(v, other);
+	if (pathingToggle)
 		FollowThePath(currentPath, v);
 }
 
@@ -179,18 +177,18 @@ void VehicleSystem::Seek(sf::RenderWindow * window, Vehicle& v)
 	//v.veclocity = v.veclocity * (MyMathLib::Magnitude(target - v.location) / r);
 }
 
-void VehicleSystem::Separate(Vehicle& v)
+void VehicleSystem::Separate(Vehicle& v, std::vector<Vehicle*>* const other_v)
 {
 	float desiredSeparation = r * 2;
 
 	sf::Vector2f sum;
 	int count = 0;
-	for (auto other : boids)
+	for (auto *other : *other_v)
 	{
-		float d = MyMathLib::Magnitude(v.location - other.location);
+		float d = MyMathLib::Magnitude(v.location - other->location);
 		if ((d > 0) && (d < desiredSeparation))
 		{
-			sf::Vector2f diff = MyMathLib::Normalize(v.location - other.location) / d;
+			sf::Vector2f diff = MyMathLib::Normalize(v.location - other->location) / d;
 			sum += diff;
 			count++;
 		}
@@ -203,17 +201,17 @@ void VehicleSystem::Separate(Vehicle& v)
 	}
 }
 
-void VehicleSystem::Alignment(Vehicle& v)
+void VehicleSystem::Alignment(Vehicle& v, std::vector<Vehicle*>* const other_v)
 {
 	float neighborDist = 100.0f;
 	Vector2f sum;
 	int count = 0;
-	for (auto other : boids)
+	for (auto *other : *other_v)
 	{
-		float d = MyMathLib::Magnitude(v.location - other.location);
+		float d = MyMathLib::Magnitude(v.location - other->location);
 		if ((d > 0) && (d < neighborDist))
 		{
-			sum += other.veclocity;
+			sum += other->veclocity;
 			count++;
 		}
 	}
@@ -228,17 +226,17 @@ void VehicleSystem::Alignment(Vehicle& v)
 		v.ApplyForce(Vector2f(0, 0));
 }
 
-void VehicleSystem::Cohesion(Vehicle& v)
+void VehicleSystem::Cohesion(Vehicle& v, std::vector<Vehicle*>* const other_v)
 {
 	float neighborDist = 100.0f;
 	Vector2f sum;
 	int count = 0;
-	for (auto other : boids)
+	for (auto *other : *other_v)
 	{
-		float d = MyMathLib::Magnitude(v.location - other.location);
+		float d = MyMathLib::Magnitude(v.location - other->location);
 		if ((d > 0) && (d < neighborDist))
 		{
-			sum += other.location;
+			sum += other->location;
 			count++;
 		}
 	}
@@ -281,7 +279,7 @@ void VehicleSystem::WindToggle()
 
 void VehicleSystem::GravityToggle()
 {
-	gravityToggle = !gravityToggle;
+	gravityToggle = !gravityToggle;	
 }
 
 void VehicleSystem::SeekToggle()
@@ -297,7 +295,7 @@ void VehicleSystem::SeparateToggle()
 
 void VehicleSystem::AlignmentToggle()
 {
-	alignmentToggle = !alignmentToggle;
+	alignmentToggle = !alignmentToggle;	
 }
 
 void VehicleSystem::CohesionToggle()
@@ -309,5 +307,33 @@ void VehicleSystem::PathingToggle()
 {
 	pathingToggle = !pathingToggle;
 	seekToggle = !seekToggle;
+}
+std::string VehicleSystem::GetWindToggleStatus()
+{
+	return (windToggle == true) ? "ON" : "OFF";
+}
+std::string VehicleSystem::GetGravityToggleStatus()
+{
+	return (gravityToggle == true) ? "ON" : "OFF";
+}
+std::string VehicleSystem::GetSeekingToggleStatus()
+{
+	return (seekToggle == true) ? "ON" : "OFF";
+}
+std::string VehicleSystem::GetSeparateToggleStatus()
+{
+	return (separateToggle == true) ? "ON" : "OFF";
+}
+std::string VehicleSystem::GetAlignmentToggleStatus()
+{
+	return (alignmentToggle == true) ? "ON" : "OFF";
+}
+std::string VehicleSystem::GetCohesionToggleStatus()
+{
+	return (cohesionToggle == true) ? "ON" : "OFF";
+}
+std::string VehicleSystem::GetPathingToggleStatus()
+{
+	return (pathingToggle == true) ? "ON" : "OFF";
 }
 #pragma endregion 

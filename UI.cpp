@@ -36,13 +36,13 @@ UI::~UI()
 void UI::Update()
 {
 	countNumber->setString("" + std::to_string(vSystem->GetBoidsCount()));
-	toggleList->setString("W: Toggle wind: " + std::to_string(vSystem->windToggle) + 
-		"\nG : Toggle gravity: " + std::to_string(vSystem->gravityToggle) + 
-		"\nM : Follow mouse position: " + std::to_string(vSystem->seekToggle) +
-		"\nS : Toggle Separating: " + std::to_string(vSystem->separateToggle) +
-		"\nC : Toggle cohesion: " + std::to_string(vSystem->cohesionToggle) +
-		"\nA : Toggle alignment: " + std::to_string(vSystem->alignmentToggle) +
-		"\nP : Follow the path: " + std::to_string(vSystem->pathingToggle) +
+	toggleList->setString("W: Toggle wind: " + vSystem->GetWindToggleStatus() + 
+		"\nG : Toggle gravity: " + vSystem->GetGravityToggleStatus() + 
+		"\nM : Follow mouse position: " + vSystem->GetSeekingToggleStatus() +
+		"\nS : Toggle Separating: " + vSystem->GetSeparateToggleStatus() +
+		"\nC : Toggle cohesion: " + vSystem->GetCohesionToggleStatus() +
+		"\nA : Toggle alignment: " + vSystem->GetAlignmentToggleStatus() +
+		"\nP : Follow the path: " + vSystem->GetPathingToggleStatus() +
 		"\nSpace : Change path");
 
 }

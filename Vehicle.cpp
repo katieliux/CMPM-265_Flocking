@@ -34,14 +34,14 @@ void Vehicle::Update(sf::RenderWindow* window, float deltaTime)
 	shape.setRotation(atan2(veclocity.x, -veclocity.y) * 180 / 3.14f);
 	shape.setPosition(location);
 
-	if (shape.getPosition().x > window->getSize().x)
-		shape.setPosition(0, shape.getPosition().y);
-	if (shape.getPosition().x < 0)
-		shape.setPosition(window->getSize().x, shape.getPosition().y);
-	if (shape.getPosition().y > window->getSize().y)
-		shape.setPosition(shape.getPosition().x, 0);
-	if (shape.getPosition().y < 0)
-		shape.setPosition(shape.getPosition().y, window->getSize().y);
+	if (shape.getPosition().x > window->getSize().x - 5)
+		shape.setPosition(6, shape.getPosition().y);
+	if (shape.getPosition().x < 5)
+		shape.setPosition(window->getSize().x - 6, shape.getPosition().y);
+	if (shape.getPosition().y > window->getSize().y - 5)
+		shape.setPosition(shape.getPosition().x, 6);
+	if (shape.getPosition().y < 5)
+		shape.setPosition(shape.getPosition().y, window->getSize().y - 6);
 }
 
 void Vehicle::ApplyForce(sf::Vector2f steer)
@@ -60,7 +60,10 @@ void Vehicle::SeekNearbyGroup(sf::Vector2f target)
 		ApplyForce(steer);
 	}
 	else
-		veclocity = veclocity * (MyMathLib::Magnitude(target - location) / r);
+		desired *= MyMathLib::map(
+			MyMathLib::Magnitude(target - location),
+			Vector2f(0, 0),
+			Vector2f(r * 4, maxSpeed));
 
 
 }
