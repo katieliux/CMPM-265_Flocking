@@ -71,7 +71,8 @@ void VehicleSystem::AddVehicle(sf::RenderWindow* window)
 
 void VehicleSystem::RemoveVehicle()
 {
-	boids.pop_back();
+	if(boids.size() >= 1)
+		boids.pop_back();	
 }
 
 int VehicleSystem::GetBoidsCount()

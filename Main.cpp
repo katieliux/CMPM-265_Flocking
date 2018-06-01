@@ -47,6 +47,11 @@ int main()
 				m_vs->AddVehicle(&window);
 				timer = 0;
 			}
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+			{
+				m_vs->RemoveVehicle();
+				timer = 0;
+			}
 		}
 
 		deltaTime = clock.restart().asSeconds();

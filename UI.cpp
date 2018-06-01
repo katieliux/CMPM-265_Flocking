@@ -36,7 +36,7 @@ UI::~UI()
 void UI::Update()
 {
 	countNumber->setString("" + std::to_string(vSystem->GetBoidsCount()));
-	toggleList->setString("W: Toggle wind: " + vSystem->GetWindToggleStatus() + 
+	toggleList->setString("LMB: Add 1 boid \nRMB: Remove 1 boid \nW: Toggle wind: " + vSystem->GetWindToggleStatus() + 
 		"\nG : Toggle gravity: " + vSystem->GetGravityToggleStatus() + 
 		"\nM : Follow mouse position: " + vSystem->GetSeekingToggleStatus() +
 		"\nS : Toggle Separating: " + vSystem->GetSeparateToggleStatus() +
